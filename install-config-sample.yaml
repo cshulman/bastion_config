@@ -1,0 +1,52 @@
+apiVersion: v1
+baseDomain: <base-domain> # cluster subdomain resulting in: *apps.<cluster-name>.<base-domain>
+credentialsMode: Mint
+metadata:
+  name: <cluster-name>
+controlPlane:
+  hyperthreading: Enabled
+  name: master
+  platform:
+    aws:
+      zones:
+      - <az1>
+      - <az2>
+      - <az3>
+  replicas: 3
+compute:
+- hyperthreading: Enabled
+  name: worker
+  platform:
+    aws:
+      zones:
+      - <az1>
+      - <az2>
+      - <az3>
+  replicas: 3
+networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14 # VPC CIDR
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: 10.0.0.0/16
+  networkType: OVNKubernetes
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  aws:
+    region: <region>
+    subnets:
+      - <az1>-subnetID
+      - <az2>-subnetID
+      - <az3>-subnetID
+    amiID: <ami-id>
+    serviceEndpoints:
+    - name: ec2
+      url: https://<vpce-ID>.ec2.<<region>>.vpce.amazonaws.com
+    userTags:
+      key1: value
+      key2: value
+publish: External
+pullSecret: '<pull-secret>'
+sshKey: |
+  <ssh-key.pub>
